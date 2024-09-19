@@ -330,8 +330,8 @@ TaskState TableHandleTestTask(void* inP) {
         else {
             if (gl_context.load) {
                 selectOut = gl_context.load;
-                gl_context.load = NULL;
-                //TableMgrViewSelectOutput(gl_context.selectCmd.tk, gl_context.load);
+                //gl_context.load = NULL;
+                TableMgrViewSelectOutput(gl_context.selectCmd.tk, gl_context.load);
             }
             else {
                 ASSERT(TRUE, "select success but no date return?\n");

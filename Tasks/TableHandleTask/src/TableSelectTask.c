@@ -47,7 +47,7 @@ typedef struct TableSelectTaskContext_t {
     
     uint64 curSelectingRowId;
     uint64 matchCnt;
-    
+    uint64 loadedRow;
     int resp;
 }TableSelectTaskContext;
 
@@ -109,6 +109,7 @@ TaskState TableSelectTask(void* inP) {
         con->lastState = TABLE_SELECT_TASK_LOAD_ROWS_SCAN;
         
         if (con->tmpRow) {
+            con->loadedRow++;
             uint32 destColCnt = con->cmd.tk.destColList->buff[0] == '*' ? table->info->colNum : con->cmd.tk.destColList->size / sizeof(uint64);
             uint64 totalSize = con->cmd.tk.destColList->buff[0] == '*' ? table->rowSize : TableMgrGetColumnIdListTotalValueSize(con->cmd.tableId, con->cmd.tk.destColList->buff, destColCnt);
 
@@ -151,7 +152,7 @@ TaskState TableSelectTask(void* inP) {
             con->tmpRowOffset = 0;
         }
 
-        if (con->curSelectingRowId > table->maxValidRowId) {
+        if (con->curSelectingRowId > table->maxValidRowId || con->loadedRow >= table->rowNum) {
             //for complete
             *state = TABLE_SELECT_TASK_WAIT_LOAD_DONE;
             return TASK_STATE_RESTART;
@@ -215,7 +216,7 @@ TaskState TableSelectTask(void* inP) {
         }
         *con->cmd.out = con->load;
         *con->cmd.resp = con->resp;
-        if (!con->load) {
+        if (!con->load || con->loadedRow == 0) {
             *con->cmd.resp = 1;//not match
         }
         freeBuffer(&con->tmpRow);
