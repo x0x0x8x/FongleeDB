@@ -22,6 +22,11 @@ insert into users (id, name, password) value (143589, 'x0x0x8x', '5220015')
 select * from users where id=500000  
 delete * from users where name='x0x0x8x'  
 drop table users  
+
+当前版本，对于insert命令的性能测试约为MySql的20多近30倍。  
+通过show profile检查，mysql的时间都耗在commit阶段了，我这台机器上约1.6ms。  
+看上去应该是对于insert命令默认采用了事务处理策略，陡增了一些不必要的磁盘IO。  
+不过后续补充事务功能后也可预见的有方法避免类似的开销，性能可期。  
   
 ## 后续开发计划：
 索引，缓存，表关联，事务支持....太多了，还有一些奇怪的点子...   
