@@ -14,6 +14,14 @@
 
 ## 当前具备的sql功能：
 基本sql命令： create，select，update，insert，delete，drop，以及查看命令：show tables，show columns from [table name] 
+比如：
+show tables
+create table users (id int32 index, name string(16) not null, password string(20))
+show columns from users
+insert into users (id, name, password) value (143589, 'x0x0x8x', '5220015')
+select * from users where id=500000
+delete * from users where name='x0x0x8x'
+drop table users
 
 ## 后续开发计划：
 索引，缓存，表关联，事务支持....太多了，还有一些奇怪的点子... 
